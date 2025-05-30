@@ -21,7 +21,7 @@ func AssertNilError(t *testing.T, err error) {
 	}
 }
 
-// AssertEqualStrings fails the test if the input strings are not equal
+// AssertEqualStrings fails the test if the input strings are not equal.
 func AssertEqualStrings(t *testing.T, act, exp string) {
 	t.Helper()
 	if act != exp {
@@ -29,7 +29,7 @@ func AssertEqualStrings(t *testing.T, act, exp string) {
 	}
 }
 
-// AssertEqualInts fails the test if the input integers are not equal
+// AssertEqualInts fails the test if the input integers are not equal.
 func AssertEqualInts(t *testing.T, act, exp int) {
 	t.Helper()
 	if act != exp {
@@ -37,7 +37,7 @@ func AssertEqualInts(t *testing.T, act, exp int) {
 	}
 }
 
-// AssertEqualIntSlices fails the test if the input slices are not equal
+// AssertEqualIntSlices fails the test if the input slices are not equal.
 func AssertEqualIntSlices(t *testing.T, act, exp []int) {
 	t.Helper()
 
@@ -53,7 +53,7 @@ func AssertEqualIntSlices(t *testing.T, act, exp []int) {
 	}
 }
 
-// AssertCorrectError fails the test if error messages are not equal
+// AssertCorrectError fails the test if error messages are not equal.
 func AssertCorrectError(t *testing.T, act, exp error) {
 	t.Helper()
 	if !errors.Is(act, exp) {
