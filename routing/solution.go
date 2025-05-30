@@ -3,6 +3,7 @@ package routing
 import (
 	"container/heap"
 	"fmt"
+	"strings"
 )
 
 type Neighbor struct {
@@ -38,8 +39,14 @@ type Node struct {
 func findMinimumLatencyPath(graph map[string][]Node, compressionNodes []string, source, target string) string {
 	// distances map will store the total distance from source router to each router
 	distances := make(map[string]int)
+
 	// distance to source(self) is 0
 	distances[source] = 0
+
+	// Traces will keep track every time distance is added/updated,
+	// holding the information from where neighbor router is reached.
+	// traces[neighbor] = previous_router
+	traces := make(map[string]string)
 
 	// setup neighbors min heap
 	minHeap := &MinHeap{}
@@ -59,14 +66,55 @@ func findMinimumLatencyPath(graph map[string][]Node, compressionNodes []string, 
 			// b) the current distance is less then the stored one
 			if !ok || distanceToNeighbor < distances[neighbor.id] {
 				distances[neighbor.id] = distanceToNeighbor
+				traces[neighbor.id] = router.id
 			}
 
-			// push new neighbor to the heap, 
+			// push new neighbor to the heap,
 			// so we can keep the loop going until all routers are traversed
 			heap.Push(minHeap, Neighbor{neighbor.id, distances[neighbor.id]})
 		}
 	}
 
-	fmt.Println(distances)
-	return ""
+	return prettyPrintPath(traceBack(traces, target))
+}
+
+// traceBack will rebuild the path from "source" to "target"
+// using the traces map.
+// Returns the path in backward order from "target" to "source"
+func traceBack(traces map[string]string, target string) []string {
+	// No path to target
+	if _, ok := traces[target]; !ok {
+		return []string{}
+	}
+
+	// restore backward path
+	backwardPath := []string{target}
+
+	for {
+		prev, ok := traces[target]
+		if ok {
+			backwardPath = append(backwardPath, prev)
+			target = prev
+		} else {
+			break
+		}
+	}
+
+	return backwardPath
+}
+
+// prettyPrintPath using the backwardPath array will
+// reverse the path in the format: A->B->C
+// Returns formatted path in proper order
+func prettyPrintPath(backwardPath []string) string {
+	var sb strings.Builder
+	for i := len(backwardPath) - 1; i >= 0; i-- {
+		if i == 0 {
+			sb.WriteString(backwardPath[i])
+		} else {
+			sb.WriteString(fmt.Sprintf("%v->", backwardPath[i]))
+		}
+	}
+
+	return sb.String()
 }

@@ -1,6 +1,10 @@
 package routing
 
-import "testing"
+import (
+	"testing"
+
+	th "developers-challenge/pkg/testhelpers"
+)
 
 func TestFindMinimumLatencyPath(t *testing.T) {
 	testCases := []struct {
@@ -13,7 +17,7 @@ func TestFindMinimumLatencyPath(t *testing.T) {
 		expRisk          int
 	}{
 		{
-			desc: "S",
+			desc: "Success_With_3Routers",
 			graph: func() map[string][]Node {
 				graph := make(map[string][]Node)
 
@@ -71,8 +75,128 @@ func TestFindMinimumLatencyPath(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			path := findMinimumLatencyPath(tc.graph, tc.compressionNodes, tc.source, tc.target)
-			t.Log(path)
+			actPath := findMinimumLatencyPath(tc.graph, tc.compressionNodes, tc.source, tc.target)
+			th.AssertEqualStrings(t, actPath, tc.expOut)
+		})
+	}
+}
+
+func TestTraceBack(t *testing.T) {
+	testCases := []struct {
+		desc   string
+		traces map[string]string
+		target string
+		expOut []string
+	}{
+		{
+			desc: "Success_With_3Routers",
+			traces: func() map[string]string {
+				t := make(map[string]string)
+				t["B"] = "A"
+				t["C"] = "A"
+				t["D"] = "C"
+				t["E"] = "B"
+				return t
+			}(),
+			target: "D",
+			expOut: []string{"D", "C", "A"},
+		},
+		{
+			desc: "Success_With_3Routers",
+			traces: func() map[string]string {
+				t := make(map[string]string)
+				t["B"] = "A"
+				t["C"] = "A"
+				t["D"] = "C"
+				t["E"] = "B"
+				return t
+			}(),
+			target: "E",
+			expOut: []string{"E", "B", "A"},
+		},
+		{
+			desc: "Success_With_2Routers",
+			traces: func() map[string]string {
+				t := make(map[string]string)
+				t["B"] = "A"
+				t["C"] = "A"
+				t["D"] = "C"
+				t["E"] = "B"
+				return t
+			}(),
+			target: "B",
+			expOut: []string{"B", "A"},
+		},
+		{
+			desc: "WhenTarget_IsSource_ShouldReturnEmpty_NoLoopEdge",
+			traces: func() map[string]string {
+				t := make(map[string]string)
+				t["B"] = "A"
+				t["C"] = "A"
+				t["D"] = "C"
+				t["E"] = "B"
+				return t
+			}(),
+			target: "A",
+			expOut: []string{},
+		},
+		// {
+		// 	desc: "WhenTarget_IsSource_ShouldReturnSelf_WithLoopEdge",
+		// 	traces: func() map[string]string {
+		// 		t := make(map[string]string)
+		// 		t["A"] = "A"
+		// 		t["B"] = "A"
+		// 		t["C"] = "A"
+		// 		t["D"] = "C"
+		// 		t["E"] = "B"
+		// 		return t
+		// 	}(),
+		// 	target: "A",
+		// 	expOut: []string{"A"},
+		// },
+		{
+			desc: "WhenNoPath_ToTarget_ShouldReturnEmpty",
+			traces: func() map[string]string {
+				t := make(map[string]string)
+				t["B"] = "A"
+				t["C"] = "A"
+				t["D"] = "C"
+				t["E"] = "B"
+				return t
+			}(),
+			target: "F",
+			expOut: []string{},
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			act := traceBack(tc.traces, tc.target)
+			th.AssertEqualStringSlices(t, act, tc.expOut)
+		})
+	}
+}
+
+func TestPrettyPrintPath(t *testing.T) {
+	testCases := []struct {
+		desc         string
+		backwardPath []string
+		expOut       string
+	}{
+		{
+			desc:         "Success",
+			backwardPath: []string{"C", "B", "A"},
+			expOut:       "A->B->C",
+		},
+		{
+			desc:         "Success_When_OneElement",
+			backwardPath: []string{"A"},
+			expOut:       "A",
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			act := prettyPrintPath(tc.backwardPath)
+			th.AssertEqualStrings(t, act, tc.expOut)
 		})
 	}
 }

@@ -53,6 +53,22 @@ func AssertEqualIntSlices(t *testing.T, act, exp []int) {
 	}
 }
 
+// AssertEqualStringSlices fails the test if the input slices are not equal.
+func AssertEqualStringSlices(t *testing.T, act, exp []string) {
+	t.Helper()
+
+	actLen, expLen := len(act), len(exp)
+	if actLen != expLen {
+		t.Errorf("exp arr len: %v, act arr len: %v", expLen, actLen)
+	}
+
+	for i := 0; i < expLen; i++ {
+		if act[i] != exp[i] {
+			t.Errorf("exp: %v, act: %v", exp, act)
+		}
+	}
+}
+
 // AssertCorrectError fails the test if error messages are not equal.
 func AssertCorrectError(t *testing.T, act, exp error) {
 	t.Helper()
