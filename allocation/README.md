@@ -13,3 +13,8 @@ Min Heap would be proper DS since it's push and pop of elements costs O(logn), w
 
 ## Assumptions
 Assume that heap DS from standard lib "container/heap" is allowed to be used since it's not external dep
+
+## TODOs
+think about testdata from file
+add more test cases
+add main func to illustrate the example input

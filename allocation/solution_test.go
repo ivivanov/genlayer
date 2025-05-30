@@ -32,23 +32,45 @@ func TestMinIntHeap(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			mh := initMinHeap(t, tc.risks)
+			mh := InitMinHeap(tc.risks)
 			act := popAllNodes(t, mh)
 			th.AssertEqualIntSlices(t, act, tc.expOut)
 		})
 	}
 }
 
-func initMinHeap(t *testing.T, risks []int) *MinHeap {
-	t.Helper()
-
-	mh := make(MinHeap, len(risks))
-	for i := 0; i < len(risks); i++ {
-		mh[i] = DataCenter{risks[i], risks[i]}
+func TestDistributeFragments(t *testing.T) {
+	testCases := []struct {
+		desc      string
+		risks     []int
+		fragments int
+		expRisk   int
+	}{
+		{
+			desc:      "Success#1",
+			risks:     []int{20, 10, 2, 15},
+			fragments: 3,
+			expRisk:   14,
+		},
+		{
+			desc:      "Success#2",
+			risks:     []int{10, 20, 30},
+			fragments: 5,
+			expRisk:   560,
+		},
+		{
+			desc:      "AllFragments_InOneDataCenter_ShouldSucceed",
+			risks:     []int{10, 20, 30, 1},
+			fragments: 500,
+			expRisk:   1,
+		},
 	}
-	heap.Init(&mh)
-
-	return &mh
+	for _, tc := range testCases {
+		t.Run(tc.desc, func(t *testing.T) {
+			actRisk := distributeFragments(tc.risks, tc.fragments)
+			th.AssertEqualInts(t, actRisk, tc.expRisk)
+		})
+	}
 }
 
 func popAllNodes(t *testing.T, mh *MinHeap) []int {
