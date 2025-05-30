@@ -35,7 +35,20 @@ type Node struct {
 	latency float32 // distance
 }
 
-// Returns the path
+// findMinimumLatencyPath computes the path with the minimum total latency between the source and target nodes
+// in the given graph. The graph is represented as an adjacency list. The function takes into account a list 
+// of compressionNodes, which may affect path selection or latency calculations. 
+// It returns the optimal path as a string and the total latency as a float32.
+//
+// Parameters:
+//   - graph: adjacency list representing the graph
+//   - compressionNodes: list of node identifiers that support compression
+//   - source: id of the starting node
+//   - target: id of the destination node
+//
+// Returns:
+//   - path: formatted path from source to target (e.g. A->B->C)
+//   - dist: the total latency of the path
 func findMinimumLatencyPath(graph map[string][]Node, compressionNodes []string, source, target string) (path string, dist float32) {
 	// distances map will store the total distance from source router to each router
 	distances := make(map[string]float32)
