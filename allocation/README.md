@@ -23,4 +23,3 @@ Assume that heap DS from standard lib "container/heap" is allowed to be used sin
 ## TODOs
 think about testdata from file
 add more test cases
-add main func to illustrate the example input
