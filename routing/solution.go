@@ -32,7 +32,7 @@ func (mh *minHeap) Pop() any {
 
 type Node struct {
 	Id      string
-	Lwatency float32 // distance
+	Latency float32 // distance
 }
 
 // FindMinimumLatencyPath computes the path with the minimum total latency between the source and target nodes
