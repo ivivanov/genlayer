@@ -32,7 +32,7 @@ func TestMinIntHeap(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			mh := InitMinHeap(tc.risks)
+			mh := initMinHeap(tc.risks)
 			act := popAllNodes(t, mh)
 			th.AssertEqualIntSlices(t, act, tc.expOut)
 		})
@@ -67,19 +67,19 @@ func TestDistributeFragments(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			actRisk := distributeFragments(tc.risks, tc.fragments)
+			actRisk := DistributeFragments(tc.risks, tc.fragments)
 			th.AssertEqualInts(t, actRisk, tc.expRisk)
 		})
 	}
 }
 
-func popAllNodes(t *testing.T, mh *MinHeap) []int {
+func popAllNodes(t *testing.T, mh *minHeap) []int {
 	t.Helper()
 
 	result := make([]int, mh.Len())
 	i := 0
 	for mh.Len() > 0 {
-		result[i] = heap.Pop(mh).(DataCenter).actualRisk
+		result[i] = heap.Pop(mh).(dataCenter).actualRisk
 		i++
 	}
 
