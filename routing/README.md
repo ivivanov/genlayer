@@ -3,12 +3,14 @@
 ## Instructions
 ```
 go test -v
-go test -bench .
 ```
 
 ## Dependencies
 
 ## Explanation
+I am using Dijkstra's algorithm for finding the shortest distance form vertex 'A' to vertex 'B'. Since the graph is weighted we should always pick the edge with smallest weight - again we can utilize the mechanics of min heap used in the prev task. 
+
+Resources: https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
 
 ## Assumptions
 I assume the task is to find the fastest path from 'A' to 'B' in directional weighted graph. The type of graph can be determined by the adjacency list in the example:
