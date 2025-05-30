@@ -30,7 +30,7 @@ func TestSimpleHash(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			actHash := simpleHash(tc.input)
+			actHash := SimpleHash(tc.input)
 			th.AssertEqualInts(t, len(actHash), tc.expLen)
 			th.AssertEqualStrings(t, actHash, tc.expOut)
 		})
@@ -60,7 +60,7 @@ func BenchmarkSimpleHash(b *testing.B) {
 	for _, tc := range testCases {
 		b.Run(tc.desc, func(b *testing.B) {
 			for b.Loop() {
-				simpleHash(tc.input)
+				SimpleHash(tc.input)
 			}
 		})
 	}
@@ -69,7 +69,7 @@ func BenchmarkSimpleHash(b *testing.B) {
 func TestReconstructData(t *testing.T) {
 	testCases := []struct {
 		desc       string
-		fragments  map[int]fragment
+		fragments  map[int]Fragment
 		expOut     string
 		shouldFail bool
 		expErr     error
@@ -81,9 +81,9 @@ func TestReconstructData(t *testing.T) {
 		},
 		{
 			desc: "TamperedFragments_ShouldFailWith_ErrTamperedData",
-			fragments: func() map[int]fragment {
+			fragments: func() map[int]Fragment {
 				fragments := initTestInput()
-				fragments[0] = fragment{"tampered", "000011001100000001000001111000"}
+				fragments[0] = Fragment{"tampered", "000011001100000001000001111000"}
 				return fragments
 			}(),
 			shouldFail: true,
@@ -99,7 +99,7 @@ func TestReconstructData(t *testing.T) {
 		tc := tc
 
 		t.Run(tc.desc, func(t *testing.T) {
-			data, err := reconstructData(tc.fragments)
+			data, err := ReconstructData(tc.fragments)
 			if tc.shouldFail {
 				th.AssertNotNilError(t, err)
 				th.AssertCorrectError(t, err, tc.expErr)
@@ -114,10 +114,10 @@ func TestReconstructData(t *testing.T) {
 	}
 }
 
-func initTestInput() map[int]fragment {
-	fragments := make(map[int]fragment)
-	fragments[3] = fragment{data: "!", hash: simpleHash("!")}
-	fragments[2] = fragment{data: "World", hash: simpleHash("World")}
-	fragments[1] = fragment{data: "Hello", hash: simpleHash("Hello")}
+func initTestInput() map[int]Fragment {
+	fragments := make(map[int]Fragment)
+	fragments[3] = Fragment{Data: "!", Hash: SimpleHash("!")}
+	fragments[2] = Fragment{Data: "World", Hash: SimpleHash("World")}
+	fragments[1] = Fragment{Data: "Hello", Hash: SimpleHash("Hello")}
 	return fragments
 }

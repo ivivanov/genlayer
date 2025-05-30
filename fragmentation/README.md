@@ -1,6 +1,12 @@
 # Fragmentation
 
 ## Instructions
+Run example:
+```
+go run ./cmd/example/main.go    
+```
+
+Run tests:
 ```
 go test -v
 go test -bench .

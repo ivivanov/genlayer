@@ -16,16 +16,26 @@ var (
 	ErrTamperedData = errors.New("data integrity verification failed")
 )
 
-type fragment struct {
-	data string
-	hash string
+type Fragment struct {
+	Data string
+	Hash string
 }
 
-func (f *fragment) isValid() bool {
-	return simpleHash(f.data) == f.hash
+func (f *Fragment) isValid() bool {
+	return SimpleHash(f.Data) == f.Hash
 }
 
-func reconstructData(input map[int]fragment) (string, error) {
+// ReconstructData rebuilds the original data string from a map of fragments.
+// The input map should have fragment indices as keys and fragment values as values.
+// The function returns the reconstructed data as a string, or an error if reconstruction fails.
+//
+// Parameters:
+//   - input: a map where keys are fragment indices and values are fragment data.
+//
+// Returns:
+//   - The reconstructed data as a string.
+//   - An error if the reconstruction is unsuccessful (e.g., missing fragments or invalid input).
+func ReconstructData(input map[int]Fragment) (string, error) {
 	var sb strings.Builder
 
 	// we need the sorted keys to reconstruct the data in proper order
@@ -36,28 +46,21 @@ func reconstructData(input map[int]fragment) (string, error) {
 		if !fragment.isValid() {
 			return "", ErrTamperedData
 		}
-		sb.WriteString(fragment.data)
+		sb.WriteString(fragment.Data)
 	}
 
 	return sb.String(), nil
 }
 
-func getSortedKeys(input map[int]fragment) []int {
-	keys := make([]int, len(input))
-
-	// extract keys from map
-	i := 0
-	for k := range input {
-		keys[i] = k
-		i++
-	}
-
-	slices.Sort(keys)
-
-	return keys
-}
-
-func simpleHash(data string) string {
+// SimpleHash computes and returns a simple hash value for the provided data string.
+// The specific hash algorithm used is implementation-defined and intended for non-cryptographic purposes.
+//
+// Parameters:
+//   - data: the input string to hash.
+//
+// Returns:
+//   - A string representing the hash value of the input data.
+func SimpleHash(data string) string {
 	result := 0
 
 	// ignore potential int overflow
@@ -78,4 +81,19 @@ func simpleHash(data string) string {
 	}
 
 	return binary
+}
+
+func getSortedKeys(input map[int]Fragment) []int {
+	keys := make([]int, len(input))
+
+	// extract keys from map
+	i := 0
+	for k := range input {
+		keys[i] = k
+		i++
+	}
+
+	slices.Sort(keys)
+
+	return keys
 }
