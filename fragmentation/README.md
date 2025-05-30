@@ -18,3 +18,6 @@ Rename example(functions, errors, etc.) to follow idiomatic Go
 
 ## TODO
 missing fragments - not sure how to define missing fragment 
+think of better way for sorting of the fragments map keys - push them in ordered DS
+maybe extract assert functions as pkg on root level
+add tests for getSortedKeys (good time to use benchmarking to test different sorting strategies)
