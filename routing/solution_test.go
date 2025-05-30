@@ -13,11 +13,11 @@ func TestFindMinimumLatencyPath(t *testing.T) {
 		compressionNodes []string
 		source           string
 		target           string
-		expOut           string
-		expRisk          int
+		expPath          string
+		expLatency       float32 // distance
 	}{
 		{
-			desc: "Success_With_3Routers",
+			desc: "Success_With_3Routers_WithoutCompression",
 			graph: func() map[string][]Node {
 				graph := make(map[string][]Node)
 
@@ -29,13 +29,32 @@ func TestFindMinimumLatencyPath(t *testing.T) {
 				return graph
 
 			}(),
-			// compressionNodes: []string{"A", "B"},
-			source: "A",
-			target: "D",
-			expOut: "A->B->D",
+			source:     "A",
+			target:     "D",
+			expPath:    "A->B->D",
+			expLatency: 25,
 		},
 		{
-			desc: "",
+			desc: "Success_With_3Routers_WithCompression",
+			graph: func() map[string][]Node {
+				graph := make(map[string][]Node)
+
+				graph["A"] = []Node{{"B", 10}, {"C", 20}}
+				graph["B"] = []Node{{"D", 15}}
+				graph["C"] = []Node{{"D", 30}}
+				graph["D"] = []Node{}
+
+				return graph
+
+			}(),
+			source:           "A",
+			target:           "D",
+			compressionNodes: []string{"B", "C"},
+			expPath:          "A->B->D",
+			expLatency:       17.5,
+		},
+		{
+			desc: "Success_With_3Routers_WithoutCompression",
 			graph: func() map[string][]Node {
 				graph := make(map[string][]Node)
 
@@ -50,10 +69,11 @@ func TestFindMinimumLatencyPath(t *testing.T) {
 			compressionNodes: []string{"A", "B"},
 			source:           "A",
 			target:           "D",
-			expOut:           "A->C->D",
+			expPath:          "A->C->D",
+			expLatency:       10,
 		},
 		{
-			desc: "",
+			desc: "Success_With_4Routers_WithoutCompression",
 			graph: func() map[string][]Node {
 				graph := make(map[string][]Node)
 
@@ -70,13 +90,15 @@ func TestFindMinimumLatencyPath(t *testing.T) {
 			compressionNodes: []string{"A", "B"},
 			source:           "A",
 			target:           "D",
-			expOut:           "A->B->F->D",
+			expPath:          "A->B->F->D",
+			expLatency:       6,
 		},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
-			actPath := findMinimumLatencyPath(tc.graph, tc.compressionNodes, tc.source, tc.target)
-			th.AssertEqualStrings(t, actPath, tc.expOut)
+			actPath, actLatency := findMinimumLatencyPath(tc.graph, tc.compressionNodes, tc.source, tc.target)
+			th.AssertEqualStrings(t, actPath, tc.expPath)
+			th.AssertEqualFloats(t, actLatency, tc.expLatency)
 		})
 	}
 }

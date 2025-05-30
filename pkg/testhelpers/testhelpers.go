@@ -37,6 +37,14 @@ func AssertEqualInts(t *testing.T, act, exp int) {
 	}
 }
 
+// AssertEqualFloat fails the test if the input floats are not equal.
+func AssertEqualFloats(t *testing.T, act, exp float32) {
+	t.Helper()
+	if act != exp {
+		t.Errorf("exp: %v, act: %v", exp, act)
+	}
+}
+
 // AssertEqualIntSlices fails the test if the input slices are not equal.
 func AssertEqualIntSlices(t *testing.T, act, exp []int) {
 	t.Helper()

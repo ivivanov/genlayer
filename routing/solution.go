@@ -8,7 +8,7 @@ import (
 
 type Neighbor struct {
 	id      string
-	latency int // distance to the neighbor (edge weight)
+	latency float32 // distance to the neighbor (edge weight)
 }
 
 type MinHeap []Neighbor
@@ -32,13 +32,13 @@ func (mh *MinHeap) Pop() any {
 
 type Node struct {
 	id      string
-	latency int // distance
+	latency float32 // distance
 }
 
-// Dijkstra
-func findMinimumLatencyPath(graph map[string][]Node, compressionNodes []string, source, target string) string {
+// Returns the path
+func findMinimumLatencyPath(graph map[string][]Node, compressionNodes []string, source, target string) (path string, dist float32) {
 	// distances map will store the total distance from source router to each router
-	distances := make(map[string]int)
+	distances := make(map[string]float32)
 
 	// distance to source(self) is 0
 	distances[source] = 0
@@ -75,7 +75,9 @@ func findMinimumLatencyPath(graph map[string][]Node, compressionNodes []string, 
 		}
 	}
 
-	return prettyPrintPath(traceBack(traces, target))
+	path = prettyPrintPath(traceBack(traces, target))
+	dist = distances[target]
+	return path, dist
 }
 
 // traceBack will rebuild the path from "source" to "target"
