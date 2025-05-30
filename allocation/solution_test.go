@@ -3,6 +3,8 @@ package allocation
 import (
 	"container/heap"
 	"testing"
+
+	th "developers-challenge/pkg/testhelpers"
 )
 
 func TestMinIntHeap(t *testing.T) {
@@ -32,23 +34,8 @@ func TestMinIntHeap(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			mh := initMinHeap(t, tc.risks)
 			act := popAllNodes(t, mh)
-			assertEqualIntSlices(t, act, tc.expOut)
+			th.AssertEqualIntSlices(t, act, tc.expOut)
 		})
-	}
-}
-
-func assertEqualIntSlices(t *testing.T, act, exp []int) {
-	t.Helper()
-
-	actLen, expLen := len(act), len(exp)
-	if actLen != expLen {
-		t.Errorf("exp arr len: %v, act arr len: %v", expLen, actLen)
-	}
-
-	for i := 0; i < expLen; i++ {
-		if act[i] != exp[i] {
-			t.Errorf("exp: %v, act: %v", exp, act)
-		}
 	}
 }
 

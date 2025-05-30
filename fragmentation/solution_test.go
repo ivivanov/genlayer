@@ -1,10 +1,11 @@
 package fragmentation
 
 import (
-	"errors"
 	"math"
 	"strings"
 	"testing"
+
+	th "developers-challenge/pkg/testhelpers"
 )
 
 func TestSimpleHash(t *testing.T) {
@@ -30,8 +31,8 @@ func TestSimpleHash(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.desc, func(t *testing.T) {
 			actHash := simpleHash(tc.input)
-			assertEqualInts(t, len(actHash), tc.expLen)
-			assertEqualStrings(t, actHash, tc.expOut)
+			th.AssertEqualInts(t, len(actHash), tc.expLen)
+			th.AssertEqualStrings(t, actHash, tc.expOut)
 		})
 	}
 }
@@ -100,14 +101,14 @@ func TestReconstructData(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			data, err := reconstructData(tc.fragments)
 			if tc.shouldFail {
-				assertNotNilError(t, err)
-				assertCorrectError(t, err, tc.expErr)
+				th.AssertNotNilError(t, err)
+				th.AssertCorrectError(t, err, tc.expErr)
 			} else {
-				assertNilError(t, err)
+				th.AssertNilError(t, err)
 			}
 
 			if data != tc.expOut {
-				assertEqualStrings(t, data, tc.expOut)
+				th.AssertEqualStrings(t, data, tc.expOut)
 			}
 		})
 	}
@@ -119,39 +120,4 @@ func initTestInput() map[int]fragment {
 	fragments[2] = fragment{data: "World", hash: simpleHash("World")}
 	fragments[1] = fragment{data: "Hello", hash: simpleHash("Hello")}
 	return fragments
-}
-
-func assertEqualStrings(t *testing.T, act, exp string) {
-	t.Helper()
-	if act != exp {
-		t.Errorf("exp: %v, act: %v", exp, act)
-	}
-}
-
-func assertEqualInts(t *testing.T, act, exp int) {
-	t.Helper()
-	if act != exp {
-		t.Errorf("exp: %v, act: %v", exp, act)
-	}
-}
-
-func assertNotNilError(t *testing.T, err error) {
-	t.Helper()
-	if err == nil {
-		t.Errorf("expected error to be not nil, but got nil")
-	}
-}
-
-func assertNilError(t *testing.T, err error) {
-	t.Helper()
-	if err != nil {
-		t.Errorf("expected error to be nil, but got not nill")
-	}
-}
-
-func assertCorrectError(t *testing.T, act, exp error) {
-	t.Helper()
-	if !errors.Is(act, exp) {
-		t.Errorf("exp: %v, act: %v", exp, act)
-	}
 }
