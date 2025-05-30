@@ -1,8 +1,14 @@
 # Routing
 
 ## Instructions
+Run example:
 ```
-go test -v
+go run ./cmd/example/main.go    
+```
+
+Run tests:
+```
+go test -v ./routing
 ```
 
 ## Dependencies
